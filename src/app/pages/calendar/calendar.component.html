@@ -1,0 +1,74 @@
+<div class="calendar-container">
+  <mat-card class="calendar-header">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>calendar_today</mat-icon>
+        Calendrier des rendez-vous
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="calendar-controls">
+        <div class="view-buttons">
+          <button mat-raised-button (click)="changeToMonthView()" class="view-btn">
+            <mat-icon>view_module</mat-icon>
+            Mois
+          </button>
+          <button mat-raised-button (click)="changeToWeekView()" class="view-btn">
+            <mat-icon>view_week</mat-icon>
+            Semaine
+          </button>
+          <button mat-raised-button (click)="changeToDayView()" class="view-btn">
+            <mat-icon>view_day</mat-icon>
+            Jour
+          </button>
+        </div>
+        
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color confirmed"></div>
+            <span>Confirmé</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color pending"></div>
+            <span>En attente</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color cancelled"></div>
+            <span>Annulé</span>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="calendar-main">
+    <mat-card-content>
+      <full-calendar [options]="calendarOptions"></full-calendar>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="calendar-info" *ngIf="currentEvents.length > 0">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>event</mat-icon>
+        Rendez-vous à venir ({{ currentEvents.length }})
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="events-list">
+        <div class="event-item" *ngFor="let event of currentEvents.slice(0, 5)">
+          <div class="event-dot" [style.backgroundColor]="event.backgroundColor"></div>
+          <div class="event-details">
+            <div class="event-title">{{ event.title }}</div>
+            <div class="event-time">
+              {{ event.start | date:'dd/MM/yyyy HH:mm' }} - {{ event.end | date:'HH:mm' }}
+            </div>
+            <div class="event-client" *ngIf="event.extendedProps['clientName']">
+              Client: {{ event.extendedProps['clientName'] }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
