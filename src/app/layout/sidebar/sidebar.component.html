@@ -1,14 +1,45 @@
-<mat-nav-list>
-  <a mat-list-item routerLink="/calendar">
-    <mat-icon matListItemIcon>calendar_today</mat-icon>
-    <span matListItemTitle>Calendrier</span>
-  </a>
-  <a mat-list-item routerLink="/booking">
-    <mat-icon matListItemIcon>event_available</mat-icon>
-    <span matListItemTitle>Réserver</span>
-  </a>
-  <a mat-list-item routerLink="/appointments">
-    <mat-icon matListItemIcon>event</mat-icon>
-    <span matListItemTitle>Mes RDV</span>
-  </a>
-</mat-nav-list>
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h3>RDV Manager</h3>
+  </div>
+  
+  <mat-nav-list>
+    <div class="nav-item" routerLinkActive="active">
+      <a routerLink="/" mat-list-item>
+        <mat-icon>dashboard</mat-icon>
+        <span>Tableau de bord</span>
+      </a>
+    </div>
+    
+    <div class="nav-item" routerLinkActive="active">
+      <a routerLink="/calendar" mat-list-item>
+        <mat-icon>calendar_today</mat-icon>
+        <span>Calendrier</span>
+      </a>
+    </div>
+    
+    <div class="nav-item" routerLinkActive="active">
+      <a routerLink="/booking" mat-list-item>
+        <mat-icon>event_available</mat-icon>
+        <span>Réserver</span>
+      </a>
+    </div>
+    
+    <div class="nav-item" routerLinkActive="active">
+      <a routerLink="/appointments" mat-list-item>
+        <mat-icon>event</mat-icon>
+        <span>Mes RDV</span>
+      </a>
+    </div>
+  </mat-nav-list>
+
+  <div class="sidebar-footer">
+    <div class="user-info">
+      <div class="user-avatar">JD</div>
+      <div class="user-details">
+        <p class="name">John Doe</p>
+        <p class="email">john&#64;example.com</p>
+      </div>
+    </div>
+  </div>
+</div>

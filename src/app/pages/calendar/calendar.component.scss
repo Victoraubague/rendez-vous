@@ -1,0 +1,248 @@
+.calendar-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 0;
+
+  .calendar-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #1976d2;
+      font-size: 1.5rem;
+    }
+
+    .calendar-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 1rem;
+
+      .view-buttons {
+        display: flex;
+        gap: 0.5rem;
+
+        .view-btn {
+          background-color: #f5f5f5;
+          color: #666666;
+          min-width: auto;
+          padding: 0 1rem;
+
+          &:hover {
+            background-color: #e3f2fd;
+            color: #1976d2;
+          }
+
+          mat-icon {
+            margin-right: 0.25rem;
+            font-size: 1.125rem;
+          }
+        }
+      }
+
+      .legend {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        .legend-item {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+
+          .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+
+            &.confirmed {
+              background-color: #4caf50;
+            }
+
+            &.pending {
+              background-color: #ff9800;
+            }
+
+            &.cancelled {
+              background-color: #f44336;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .calendar-main {
+    flex: 1;
+
+    mat-card-content {
+      padding: 1rem;
+    }
+
+    // Styles pour FullCalendar
+    :host ::ng-deep {
+      .fc {
+        font-family: 'Roboto', sans-serif;
+
+        .fc-toolbar {
+          margin-bottom: 1rem;
+
+          .fc-toolbar-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333333;
+          }
+
+          .fc-button-group {
+            .fc-button {
+              background-color: #1976d2;
+              border-color: #1976d2;
+              text-transform: none;
+              font-weight: 500;
+
+              &:hover {
+                background-color: #1565c0;
+                border-color: #1565c0;
+              }
+
+              &.fc-button-active {
+                background-color: #0d47a1;
+                border-color: #0d47a1;
+              }
+            }
+          }
+        }
+
+        .fc-daygrid-day {
+          &:hover {
+            background-color: #f5f7fa;
+          }
+        }
+
+        .fc-event {
+          border-radius: 4px;
+          border: none;
+          padding: 2px 4px;
+          font-size: 0.75rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          }
+
+          .fc-event-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+
+        .fc-timegrid-event {
+          .fc-event-main {
+            padding: 4px;
+          }
+        }
+
+        .fc-daygrid-event {
+          margin: 1px 2px;
+        }
+
+        .fc-day-today {
+          background-color: #e3f2fd !important;
+        }
+
+        .fc-business-hours {
+          background-color: #f8f9fa;
+        }
+      }
+    }
+  }
+
+  .calendar-info {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: #1976d2;
+      font-size: 1.125rem;
+    }
+
+    .events-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 300px;
+      overflow-y: auto;
+
+      .event-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #e3f2fd;
+        }
+
+        .event-dot {
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+          margin-top: 0.25rem;
+          flex-shrink: 0;
+        }
+
+        .event-details {
+          flex: 1;
+
+          .event-title {
+            font-weight: 600;
+            color: #333333;
+            margin-bottom: 0.25rem;
+          }
+
+          .event-time {
+            font-size: 0.875rem;
+            color: #666666;
+            margin-bottom: 0.25rem;
+          }
+
+          .event-client {
+            font-size: 0.75rem;
+            color: #999999;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .calendar-container {
+    .calendar-header {
+      .calendar-controls {
+        flex-direction: column;
+        align-items: stretch;
+
+        .view-buttons {
+          justify-content: center;
+        }
+
+        .legend {
+          justify-content: center;
+        }
+      }
+    }
+  }
+}
