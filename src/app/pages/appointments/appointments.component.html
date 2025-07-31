@@ -1,0 +1,186 @@
+<div class="appointments-container">
+  <!-- En-tête avec statistiques -->
+  <div class="appointments-header">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>event</mat-icon>
+          Mes rendez-vous
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stats-chips">
+          <mat-chip-set>
+            <mat-chip 
+              [color]="statusFilter === 'all' ? 'primary' : ''"
+              (click)="onStatusFilterChange('all')"
+              class="stat-chip">
+              Tous ({{ getAppointmentsByStatus().all }})
+            </mat-chip>
+            <mat-chip 
+              [color]="statusFilter === 'confirmed' ? 'primary' : ''"
+              (click)="onStatusFilterChange('confirmed')"
+              class="stat-chip">
+              Confirmés ({{ getAppointmentsByStatus().confirmed }})
+            </mat-chip>
+            <mat-chip 
+              [color]="statusFilter === 'pending' ? 'accent' : ''"
+              (click)="onStatusFilterChange('pending')"
+              class="stat-chip">
+              En attente ({{ getAppointmentsByStatus().pending }})
+            </mat-chip>
+            <mat-chip 
+              [color]="statusFilter === 'cancelled' ? 'warn' : ''"
+              (click)="onStatusFilterChange('cancelled')"
+              class="stat-chip">
+              Annulés ({{ getAppointmentsByStatus().cancelled }})
+            </mat-chip>
+          </mat-chip-set>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Filtres et tri -->
+  <div class="filters-section">
+    <mat-card>
+      <mat-card-content>
+        <div class="filters-row">
+          <mat-form-field appearance="outline" class="sort-field">
+            <mat-label>Trier par</mat-label>
+            <mat-select [value]="sortBy" (valueChange)="onSortChange($event)">
+              <mat-option value="date-asc">Date (plus récent)</mat-option>
+              <mat-option value="date-desc">Date (plus ancien)</mat-option>
+              <mat-option value="client-asc">Client (A-Z)</mat-option>
+              <mat-option value="client-desc">Client (Z-A)</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="results-count">
+            {{ filteredAppointments.length }} résultat(s)
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Liste des rendez-vous -->
+  <div class="appointments-list">
+    <div *ngIf="isLoading" class="loading-container">
+      <p>Chargement des rendez-vous...</p>
+    </div>
+
+    <div *ngIf="!isLoading && filteredAppointments.length === 0" class="empty-state">
+      <mat-card>
+        <mat-card-content>
+          <div class="empty-content">
+            <mat-icon>event_busy</mat-icon>
+            <h3>Aucun rendez-vous trouvé</h3>
+            <p *ngIf="statusFilter === 'all'">Vous n'avez aucun rendez-vous enregistré.</p>
+            <p *ngIf="statusFilter !== 'all'">Aucun rendez-vous avec le statut "{{ getStatusLabel(statusFilter) }}".</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <div *ngIf="!isLoading && filteredAppointments.length > 0" class="appointments-grid">
+      <mat-card 
+        *ngFor="let appointment of filteredAppointments" 
+        class="appointment-card"
+        [class.past-appointment]="isPastAppointment(appointment)">
+        
+        <mat-card-header>
+          <div class="appointment-header">
+            <div class="appointment-status">
+              <mat-chip [color]="getStatusColor(appointment.status)" class="status-chip">
+                <mat-icon>{{ getStatusIcon(appointment.status) }}</mat-icon>
+                {{ getStatusLabel(appointment.status) }}
+              </mat-chip>
+            </div>
+            
+            <div class="appointment-actions">
+              <button 
+                mat-icon-button 
+                [matMenuTriggerFor]="menu"
+                class="actions-button">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              
+              <mat-menu #menu="matMenu">
+                <button 
+                  mat-menu-item 
+                  (click)="rescheduleAppointment(appointment)"
+                  [disabled]="!canRescheduleAppointment(appointment)">
+                  <mat-icon>schedule</mat-icon>
+                  <span>Reprogrammer</span>
+                </button>
+                <button 
+                  mat-menu-item 
+                  (click)="cancelAppointment(appointment)"
+                  [disabled]="!canCancelAppointment(appointment)"
+                  class="cancel-action">
+                  <mat-icon>cancel</mat-icon>
+                  <span>Annuler</span>
+                </button>
+              </mat-menu>
+            </div>
+          </div>
+        </mat-card-header>
+
+        <mat-card-content>
+          <div class="appointment-details">
+            <div class="detail-row">
+              <mat-icon>person</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">Client</span>
+                <span class="detail-value">{{ appointment.clientName }}</span>
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <mat-icon>email</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">Email</span>
+                <span class="detail-value">{{ appointment.clientEmail }}</span>
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <mat-icon>calendar_today</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">Date</span>
+                <span class="detail-value">{{ appointment.start | date:'fullDate':'fr' }}</span>
+              </div>
+            </div>
+
+            <div class="detail-row">
+              <mat-icon>schedule</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">Horaire</span>
+                <span class="detail-value">
+                  {{ appointment.start | date:'HH:mm' }} - {{ appointment.end | date:'HH:mm' }}
+                </span>
+              </div>
+            </div>
+
+            <div class="detail-row" *ngIf="appointment.description">
+              <mat-icon>notes</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label">Description</span>
+                <span class="detail-value">{{ appointment.description }}</span>
+              </div>
+            </div>
+
+            <div class="detail-row" *ngIf="isPastAppointment(appointment)" class="past-indicator">
+              <mat-icon>history</mat-icon>
+              <div class="detail-content">
+                <span class="detail-label past-label">Rendez-vous passé</span>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,203 @@
+.reschedule-modal {
+  min-width: 500px;
+  max-width: 600px;
+
+  h2[mat-dialog-title] {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1976d2;
+    font-size: 1.25rem;
+    margin: 0 0 1rem 0;
+
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+
+  .current-appointment {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+
+    h3 {
+      color: #333333;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .appointment-info {
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        font-size: 0.875rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        mat-icon {
+          color: #666666;
+          font-size: 1rem;
+          width: 1rem;
+          height: 1rem;
+        }
+
+        span {
+          color: #333333;
+        }
+      }
+    }
+  }
+
+  .new-appointment {
+    h3 {
+      color: #333333;
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0 0 1rem 0;
+    }
+
+    .reschedule-form {
+      .full-width {
+        width: 100%;
+      }
+
+      .time-slots-section {
+        margin-top: 1rem;
+
+        .loading-slots {
+          text-align: center;
+          padding: 1rem;
+          color: #666666;
+        }
+
+        .no-slots {
+          text-align: center;
+          padding: 1rem;
+          color: #666666;
+
+          mat-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+            color: #999999;
+            margin-bottom: 0.5rem;
+          }
+        }
+
+        .time-slots-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+          gap: 0.5rem;
+          margin-top: 1rem;
+
+          .time-slot-button {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            padding: 0.5rem;
+            text-align: center;
+            transition: all 0.2s ease;
+            font-size: 0.75rem;
+            font-weight: 500;
+
+            &:hover {
+              background-color: #e3f2fd;
+              border-color: #1976d2;
+            }
+
+            &.mat-mdc-radio-checked {
+              background-color: #1976d2;
+              border-color: #1976d2;
+              color: white;
+
+              .mdc-radio {
+                --mdc-radio-selected-icon-color: white;
+              }
+            }
+
+            .mdc-radio {
+              display: none;
+            }
+          }
+        }
+
+        .form-error {
+          color: #f44336;
+          font-size: 0.75rem;
+          margin-top: 0.5rem;
+        }
+      }
+    }
+  }
+
+  mat-dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0;
+    margin-top: 1.5rem;
+
+    .cancel-button {
+      color: #666666;
+
+      &:hover {
+        background-color: #f5f5f5;
+      }
+
+      mat-icon {
+        margin-right: 0.25rem;
+      }
+    }
+
+    .confirm-button {
+      background-color: #1976d2;
+      color: white;
+
+      &:hover:not(:disabled) {
+        background-color: #1565c0;
+      }
+
+      &:disabled {
+        background-color: #cccccc;
+        color: #666666;
+      }
+
+      mat-icon {
+        margin-right: 0.25rem;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+  .reschedule-modal {
+    min-width: auto;
+    width: 100%;
+
+    .new-appointment {
+      .reschedule-form {
+        .time-slots-section {
+          .time-slots-grid {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+      }
+    }
+
+    mat-dialog-actions {
+      flex-direction: column;
+
+      button {
+        width: 100%;
+      }
+    }
+  }
+}

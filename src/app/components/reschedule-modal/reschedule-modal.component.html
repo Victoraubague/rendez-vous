@@ -1,0 +1,94 @@
+<div class="reschedule-modal">
+  <h2 mat-dialog-title>
+    <mat-icon>schedule</mat-icon>
+    Reprogrammer le rendez-vous
+  </h2>
+
+  <mat-dialog-content>
+    <div class="current-appointment">
+      <h3>Rendez-vous actuel :</h3>
+      <div class="appointment-info">
+        <div class="info-item">
+          <mat-icon>person</mat-icon>
+          <span>{{ data.appointment.clientName }}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon>calendar_today</mat-icon>
+          <span>{{ data.appointment.start | date:'fullDate':'fr' }}</span>
+        </div>
+        <div class="info-item">
+          <mat-icon>schedule</mat-icon>
+          <span>{{ data.appointment.start | date:'HH:mm' }} - {{ data.appointment.end | date:'HH:mm' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="new-appointment">
+      <h3>Nouvelle date et heure :</h3>
+      <form [formGroup]="rescheduleForm" class="reschedule-form">
+        
+        <!-- Sélection de la nouvelle date -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nouvelle date</mat-label>
+          <input 
+            matInput 
+            [matDatepicker]="picker" 
+            formControlName="selectedDate"
+            [min]="minDate"
+            [matDatepickerFilter]="dateFilter"
+            readonly>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="hasError('selectedDate', 'required')">
+            {{ getErrorMessage('selectedDate') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Sélection du nouveau créneau -->
+        <div *ngIf="selectedDate" class="time-slots-section">
+          <div *ngIf="isLoading" class="loading-slots">
+            <p>Chargement des créneaux disponibles...</p>
+          </div>
+
+          <div *ngIf="!isLoading && availableSlots.length === 0 && selectedDate" class="no-slots">
+            <mat-icon>event_busy</mat-icon>
+            <p>Aucun créneau disponible pour cette date</p>
+          </div>
+
+          <mat-radio-group 
+            formControlName="selectedTimeSlot" 
+            class="time-slots-grid"
+            *ngIf="!isLoading && availableSlots.length > 0">
+            <mat-radio-button 
+              *ngFor="let slot of availableSlots" 
+              [value]="slot"
+              class="time-slot-button">
+              {{ slot.start }} - {{ slot.end }}
+            </mat-radio-button>
+          </mat-radio-group>
+
+          <mat-error *ngIf="hasError('selectedTimeSlot', 'required')" class="form-error">
+            {{ getErrorMessage('selectedTimeSlot') }}
+          </mat-error>
+        </div>
+
+      </form>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions>
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      <mat-icon>close</mat-icon>
+      Annuler
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onConfirm()"
+      [disabled]="!rescheduleForm.valid || isLoading"
+      class="confirm-button">
+      <mat-icon>check</mat-icon>
+      Confirmer
+    </button>
+  </mat-dialog-actions>
+</div>
