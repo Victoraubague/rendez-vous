@@ -1,0 +1,176 @@
+<div class="booking-container">
+  <div class="booking-header">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>event_available</mat-icon>
+          Réserver un rendez-vous
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Choisissez une date et un créneau horaire disponible pour votre rendez-vous.</p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="booking-form">
+    <mat-card>
+      <mat-card-content>
+        <form [formGroup]="bookingForm" (ngSubmit)="onSubmit()" class="booking-form-content">
+          
+          <!-- Sélection de la date -->
+          <div class="form-section">
+            <h3>
+              <mat-icon>calendar_today</mat-icon>
+              Choisir une date
+            </h3>
+            
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Date du rendez-vous</mat-label>
+              <input 
+                matInput 
+                [matDatepicker]="picker" 
+                formControlName="selectedDate"
+                [min]="minDate"
+                [matDatepickerFilter]="dateFilter"
+                readonly>
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="hasError('selectedDate', 'required')">
+                {{ getErrorMessage('selectedDate') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Sélection du créneau horaire -->
+          <div class="form-section" *ngIf="selectedDate">
+            <h3>
+              <mat-icon>schedule</mat-icon>
+              Créneaux disponibles
+            </h3>
+            
+            <div *ngIf="isLoading" class="loading-slots">
+              <p>Chargement des créneaux disponibles...</p>
+            </div>
+
+            <div *ngIf="!isLoading && availableSlots.length === 0 && selectedDate" class="no-slots">
+              <mat-icon>event_busy</mat-icon>
+              <p>Aucun créneau disponible pour cette date</p>
+            </div>
+
+            <mat-radio-group 
+              formControlName="selectedTimeSlot" 
+              class="time-slots-grid"
+              *ngIf="!isLoading && availableSlots.length > 0">
+              <mat-radio-button 
+                *ngFor="let slot of availableSlots" 
+                [value]="slot"
+                class="time-slot-button">
+                {{ slot.start }} - {{ slot.end }}
+              </mat-radio-button>
+            </mat-radio-group>
+
+            <mat-error *ngIf="hasError('selectedTimeSlot', 'required')" class="form-error">
+              {{ getErrorMessage('selectedTimeSlot') }}
+            </mat-error>
+          </div>
+
+          <!-- Informations client -->
+          <div class="form-section" *ngIf="bookingForm.get('selectedTimeSlot')?.value">
+            <h3>
+              <mat-icon>person</mat-icon>
+              Vos informations
+            </h3>
+            
+            <div class="client-info-fields">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Nom complet</mat-label>
+                <input matInput formControlName="clientName" placeholder="Ex: Jean Dupont">
+                <mat-icon matSuffix>person</mat-icon>
+                <mat-error *ngIf="hasError('clientName', 'required')">
+                  {{ getErrorMessage('clientName') }}
+                </mat-error>
+                <mat-error *ngIf="hasError('clientName', 'minlength')">
+                  {{ getErrorMessage('clientName') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Email</mat-label>
+                <input matInput type="email" formControlName="clientEmail" placeholder="Ex: jean.dupont&#64;email.com">
+                <mat-icon matSuffix>email</mat-icon>
+                <mat-error *ngIf="hasError('clientEmail', 'required')">
+                  {{ getErrorMessage('clientEmail') }}
+                </mat-error>
+                <mat-error *ngIf="hasError('clientEmail', 'email')">
+                  {{ getErrorMessage('clientEmail') }}
+                </mat-error>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description (optionnel)</mat-label>
+                <textarea 
+                  matInput 
+                  formControlName="description" 
+                  rows="3"
+                  placeholder="Décrivez brièvement l'objet de votre rendez-vous...">
+                </textarea>
+                <mat-icon matSuffix>notes</mat-icon>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Résumé et validation -->
+          <div class="form-section booking-summary" *ngIf="bookingForm.get('clientName')?.value">
+            <h3>
+              <mat-icon>summary</mat-icon>
+              Résumé de votre réservation
+            </h3>
+            
+            <div class="summary-card">
+              <div class="summary-item">
+                <mat-icon>calendar_today</mat-icon>
+                <span>{{ selectedDate | date:'fullDate':'fr' }}</span>
+              </div>
+              <div class="summary-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ bookingForm.get('selectedTimeSlot')?.value?.start }} - {{ bookingForm.get('selectedTimeSlot')?.value?.end }}</span>
+              </div>
+              <div class="summary-item">
+                <mat-icon>person</mat-icon>
+                <span>{{ bookingForm.get('clientName')?.value }}</span>
+              </div>
+              <div class="summary-item">
+                <mat-icon>email</mat-icon>
+                <span>{{ bookingForm.get('clientEmail')?.value }}</span>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button 
+                mat-raised-button 
+                color="primary" 
+                type="submit" 
+                [disabled]="!bookingForm.valid || isLoading"
+                class="submit-button">
+                <mat-icon *ngIf="!isLoading">event_available</mat-icon>
+                <mat-icon *ngIf="isLoading">hourglass_empty</mat-icon>
+                {{ isLoading ? 'Réservation en cours...' : 'Confirmer la réservation' }}
+              </button>
+
+              <button 
+                mat-button 
+                type="button" 
+                (click)="resetForm()"
+                [disabled]="isLoading">
+                <mat-icon>refresh</mat-icon>
+                Recommencer
+              </button>
+            </div>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

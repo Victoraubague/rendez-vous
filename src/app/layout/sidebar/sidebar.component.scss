@@ -37,6 +37,25 @@
           color: #1976d2;
         }
       }
+    }
+
+    .nav-disabled {
+      .disabled-link {
+        opacity: 0.5;
+        cursor: not-allowed;
+        position: relative;
+
+        &:hover {
+          background-color: transparent !important;
+        }
+
+        .coming-soon {
+          position: absolute;
+          right: 1rem;
+          font-size: 1rem;
+          color: #ff9800;
+        }
+      }
 
       a {
         display: flex;
